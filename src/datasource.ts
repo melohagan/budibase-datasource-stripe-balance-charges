@@ -9,12 +9,12 @@ class CustomIntegration implements IntegrationBase {
       apiVersion: '2022-08-01'
     })
   }
-  
+
   async create(query: Stripe.ChargeCreateParams) {
     return await this.stripe.charges.create(query)
   }
 
-  async read(query: { id: string, ending_before: string, limit: number, starting_after: string,
+  async read(query: { id: string, customer: string; ending_before: string, limit: number, starting_after: string,
   extra: { [key:string]: string } }) {
     if (query.extra.type === "Balance") {
       return await this.stripe.balance.retrieve()
@@ -22,7 +22,12 @@ class CustomIntegration implements IntegrationBase {
     if (query.id) {
       return await this.stripe.charges.retrieve(query.id)
     }
-    return await this.stripe.charges.list(query)
+    return await this.stripe.charges.list({
+      customer: query.customer,
+      ending_before: query.ending_before,
+      limit: query.limit,
+      starting_after: query.starting_after
+    })
   }
 
   async update(query: {
@@ -59,6 +64,14 @@ class CustomIntegration implements IntegrationBase {
     return await this.stripe.charges.search({
       query: query.sql
     })
+  }
+
+  async listBalanceTransactions(query: { payout: string, currency: string, ending_before: string, limit: number, starting_after: string,
+  extra: { [key:string]: string } }) {
+    let { extra, ...params} = query
+    //@ts-ignore
+    params.type = query.extra.type
+    return await this.stripe.balanceTransactions.list(params)
   }
 }
 
