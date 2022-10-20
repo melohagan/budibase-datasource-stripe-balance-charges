@@ -9,24 +9,16 @@ class CustomIntegration implements IntegrationBase {
       apiVersion: '2022-08-01'
     })
   }
-
-  // { 
-  //   amount: number,
-  //   currency: string,
-  //   customer: string,
-  //   description: string,
-  //   metadata: object,
-  //   receipt_email: string,
-  //   shipping: object,
-  //   source: string,
-  //   statement_descriptor: string
-  //   statement_descriptor_suffix: string
-  //  }
+  
   async create(query: Stripe.ChargeCreateParams) {
     return await this.stripe.charges.create(query)
   }
 
-  async read(query: { id: string, ending_before: string, limit: number, starting_after: string }) {
+  async read(query: { id: string, ending_before: string, limit: number, starting_after: string,
+  extra: { [key:string]: string } }) {
+    if (query.extra.type === "Balance") {
+      return await this.stripe.balance.retrieve()
+    }
     if (query.id) {
       return await this.stripe.charges.retrieve(query.id)
     }
