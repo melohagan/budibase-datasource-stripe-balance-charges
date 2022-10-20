@@ -1,7 +1,7 @@
 {
   "name": "stripe-balance-charges-datasource",
   "version": "1.2.0",
-  "description": "Manage Stripe Balances, Balance Transactions and Charges ",
+  "description": "Manage Stripe Balances, Balance Transactions and Charges",
   "main": "src/index.ts",
   "license": "MIT",
   "scripts": {
